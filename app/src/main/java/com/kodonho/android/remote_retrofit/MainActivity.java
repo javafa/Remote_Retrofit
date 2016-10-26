@@ -34,14 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
         String url = "http://openapi.seoul.go.kr:8088/"+key+"/json/"+serviceName+"/"+begin+"/"+end+"/";
         //1. Retrofit client 생성
-        Retrofit client = new Retrofit.Builder().baseUrl("http://openapi.seoul.go.kr:8088") // 베이스 도메인 지정
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("http://openapi.seoul.go.kr:8088") // 베이스 도메인 지정
                                 .addConverterFactory(GsonConverterFactory.create()) // json 컨버팅 라이브러리 지정
                                 .build();
-
         Log.e("base url",url);
 
         // 2. Retrofit client 에서 사용할 interface 지정
-        ISeoulOpenData service = client.create(ISeoulOpenData.class);
+        ISeoulOpenData service = retrofit.create(ISeoulOpenData.class);
         // 3. interface(서비스)를 통해서 데이터를 호출한다
         Call<RemoteData> remoteData = service.getData(key,serviceName,begin,end);
         // 4. 비동기 데이터를 받기위한 리스너 세팅
