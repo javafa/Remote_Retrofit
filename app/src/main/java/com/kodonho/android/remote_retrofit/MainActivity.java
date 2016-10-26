@@ -13,14 +13,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-
 /*
+    1. gradle에 retrofit 라이브러리추가
+    2. manifest에 INTERNET 권한 추가
+
     Open Api key : 4c425976676b6f643437665377554c
                  : sample
     사용 Api : http://openapi.seoul.go.kr:8088/(인증키)/json/SeoulRoadNameInfo/1/5/
                                                                  ↑ 서비스명 : 서울시 도로명 정보
  */
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -33,12 +34,12 @@ public class MainActivity extends AppCompatActivity {
         int end = 5;
 
         String url = "http://openapi.seoul.go.kr:8088/"+key+"/json/"+serviceName+"/"+begin+"/"+end+"/";
+        Log.e("base url",url);
+
         //1. Retrofit client 생성
         Retrofit retrofit = new Retrofit.Builder().baseUrl("http://openapi.seoul.go.kr:8088") // 베이스 도메인 지정
                                 .addConverterFactory(GsonConverterFactory.create()) // json 컨버팅 라이브러리 지정
                                 .build();
-        Log.e("base url",url);
-
         // 2. Retrofit client 에서 사용할 interface 지정
         ISeoulOpenData service = retrofit.create(ISeoulOpenData.class);
         // 3. interface(서비스)를 통해서 데이터를 호출한다
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.e("RemoteData",response.message());
                 }
             }
-
             @Override
             public void onFailure(Call<RemoteData> call, Throwable t) {
                 t.printStackTrace();
@@ -65,11 +65,15 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
+// 인터페이스 생성
 interface ISeoulOpenData {
     @GET("/{key}/json/{serviceName}/{begin}/{end}/")
     Call<RemoteData> getData(@Path("key")String key, @Path("serviceName")String serviceName, @Path("begin")int begin, @Path("end")int end);
 }
 
+// JSON 데이터와 매핑되는 클래스
+// 인터넷에 변환툴 제공
+// http://pojo.sodhanalibrary.com/
 class RemoteData {
     SeoulRoadNameInfo SeoulRoadNameInfo;
     public SeoulRoadNameInfo getSeoulRoadNameInfo() {
